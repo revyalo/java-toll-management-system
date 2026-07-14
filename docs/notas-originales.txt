@@ -1,0 +1,16 @@
+AUTOR: David Arevalo Rey
+
+La practica se ha realizado completamente de forma individual, por un unico integrante del grupo.
+
+----------------------------------------------------------------------------------------------------
+
+Respecto para los valores velocidad y peso en la interfaz grafica, se debera poner siempre un "." nunca una ",".
+Los tickets se almacenan en la carpeta Datos en el proyecto de la grafica, pero se dara una carpeta externa para poder verlas.
+La carpeta en Datos se almacena "peaje.dat", donde se hace el backup y se vuelve a cargar para mantener la consistencia de datos.
+En la IU Operario, es condicion necesaria para generar un ticket de peaje, primero registrar la entrada con la matricula, posteriormente
+registrar la salida con la matricula y el peso, y se podra generar el ticket de peaje que generara un archivo que se guardara en la carpeta Datos.
+Las multas por parte del agente, se daran si el agente piensa que tengan sentido.
+La carpeta junto a la clase CargarInformacion, permite introducir los datos que se van a revisar y mirar directamente en la IU grafica, aunque estos datos tambien
+se podran introducir de manera dinamica en la IU grafica.
+La clase CargarInformacion se ha hecho con la intencion de facilitar que la introduccion de datos, la ejecucion del programa y la consistencia de datos funciona correctamente.
+Para todos los campos de la IU grafica donde haya que introducir datos, habra que eliminar el campo que ponga encima, si no dara error, pues los campos no seran validos.

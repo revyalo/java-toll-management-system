@@ -1,0 +1,9 @@
+*.java text eol=lf
+*.form text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.txt text eol=lf
+*.pdf binary
+*.mp4 binary
+*.dat binary
+*.jar binary
