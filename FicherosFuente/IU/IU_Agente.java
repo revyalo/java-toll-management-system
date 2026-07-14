@@ -13,10 +13,11 @@ import practicapeajes.Usuarios.Agente;
  * @author DavidArevaloRey
  */
 public class IU_Agente extends javax.swing.JFrame {
+    private static final long serialVersionUID = 1L;
     /**
      * Creates new form IU_Agente
      */
-    private Agente agente;
+    private transient Agente agente;
     public IU_Agente(Agente agente) {
         this.agente = agente;
         initComponents();
@@ -52,13 +53,13 @@ public class IU_Agente extends javax.swing.JFrame {
             }
         });
 
-        matricula.setText("Introducir matricula");
+        matricula.setText("");
 
         jLabel1.setText("IU_Agente");
 
         velocidad.setColumns(20);
         velocidad.setRows(5);
-        velocidad.setText("Introducir velocidad\n");
+        velocidad.setText("");
         jScrollPane2.setViewportView(velocidad);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -103,8 +104,8 @@ public class IU_Agente extends javax.swing.JFrame {
 
     private void botonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonActionPerformed
         // TODO add your handling code here:
-        String matri = matricula.getText();
-        String v = velocidad.getText();
+        String matri = matricula.getText().trim();
+        String v = velocidad.getText().trim();
         
         if(matri.isEmpty()){
             Ventana.setText("Introduza una matricula valida");
@@ -112,17 +113,24 @@ public class IU_Agente extends javax.swing.JFrame {
         }
         
         if(v.isEmpty()){
-            Ventana.setText("Introduza una matricula valida");
+            Ventana.setText("Introduza una velocidad valida");
             return;
         }
 
+        double velocidadNumerica;
+        try{
+            velocidadNumerica = Double.parseDouble(v);
+        }catch(NumberFormatException e){
+            Ventana.setText("Introduza una velocidad numerica valida. Use punto para los decimales.");
+            return;
+        }
 
-        
-        Double.parseDouble(v);
-
-        agente.multarCoches(matri,Double.parseDouble(v));
-            
-        Ventana.setText("multa registrada con exito para el vehiculo " + matri + " con una velocidad de " + v + " km/h");
+        boolean registrada = agente.multarCoches(matri, velocidadNumerica);
+        if(registrada){
+            Ventana.setText("Multa registrada con exito para el vehiculo " + matri + " con una velocidad de " + v + " km/h");
+        }else{
+            Ventana.setText("No se ha generado multa: la velocidad debe superar el limite permitido.");
+        }
         
 
         
@@ -160,7 +168,7 @@ public class IU_Agente extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                SistemaPeaje sistemaPeaje = new SistemaPeaje();
+                SistemaPeaje sistemaPeaje = practicapeajes.Datos.Datos.cargarDatos();
                 Agente operarioActual = new Agente(sistemaPeaje);
 
                 new IU_Agente(operarioActual).setVisible(true);

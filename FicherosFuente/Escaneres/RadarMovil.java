@@ -19,6 +19,7 @@ que sobrepase la velocidad permitida en un punto exacto y genere una multa
 */
 
 public class RadarMovil extends Camara {
+    private static final long serialVersionUID = 1L;
     private String matricula;
     private double velocidad;
     private final static double EXCESO = 120.00; //esta variable estatica es el maximo de velocidad
@@ -38,8 +39,11 @@ public class RadarMovil extends Camara {
     }//dependiendo de la velocidad, retornara el precio de la multa
 
     public static Multa hacerMulta(String matricula, LocalDateTime fecha, double velocidad) {
+        if(matricula == null || matricula.trim().isEmpty() || fecha == null || velocidad <= EXCESO){
+            return null;
+        }
         double importe = calcularImporte(velocidad);
-        return new Multa(matricula, fecha, velocidad, importe, TipoRadar.MOVIL);
+        return new Multa(matricula.trim(), fecha, velocidad, importe, TipoRadar.MOVIL);
 
     }//generara la multa
 

@@ -24,16 +24,18 @@ public class Operario {
         this.sistema = sistema;
     }
 
-    public void registrarEntrada(String matricula, LocalDateTime fecha) {
+    public boolean registrarEntrada(String matricula, LocalDateTime fecha) {
         Vehiculo coche = new Vehiculo(matricula, 0.0);
-        sistema.registrarEntrada(coche, fecha);
+        boolean registrada = sistema.registrarEntrada(coche, fecha);
         System.out.println("Operario: Solicita registrar la entrada de " + matricula);
+        return registrada;
 
     }
 
-    public void registrarSalida(String matricula, LocalDateTime fecha, double tamano) {
-        sistema.registrarSalida(matricula, fecha, tamano);
+    public boolean registrarSalida(String matricula, LocalDateTime fecha, double tamano) {
+        boolean registrada = sistema.registrarSalida(matricula, fecha, tamano);
      System.out.println("Operario: Solicita registrar la salida de " + matricula);
+     return registrada;
 
     }
     
@@ -78,9 +80,10 @@ public class Operario {
         System.out.println("Operario: Solicita exportar historial de " + matricula);
     }
     
-    public void aplicarMultaMovil(String matricula, double velocidad, LocalDateTime fecha){
-    sistema.hacerMultaMovil(matricula, velocidad, fecha);
+    public boolean aplicarMultaMovil(String matricula, double velocidad, LocalDateTime fecha){
+    boolean registrada = sistema.hacerMultaMovil(matricula, velocidad, fecha);
         System.out.println("Operario: Solicita aplicar multa movil de " + matricula);
+        return registrada;
     
     }
     

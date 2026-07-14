@@ -16,7 +16,8 @@ import practicapeajes.Usuarios.Conductor;
  * @author DavidArevaloRey
  */
 public class IU_Conductor extends javax.swing.JFrame {
-    private Conductor c;
+    private static final long serialVersionUID = 1L;
+    private transient Conductor c;
     /** Creates new form IU_Conductor */
     public IU_Conductor(Conductor c) {
         initComponents();
@@ -64,7 +65,7 @@ public class IU_Conductor extends javax.swing.JFrame {
             }
         });
 
-        matricula.setText("Matricula");
+        matricula.setText("");
 
         Ventana.setEditable(false);
         Ventana.setColumns(20);
@@ -73,7 +74,7 @@ public class IU_Conductor extends javax.swing.JFrame {
 
         jLabel1.setText("IU_Conductor");
 
-        id.setText("Identificador");
+        id.setText("");
         id.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 idActionPerformed(evt);
@@ -130,8 +131,8 @@ public class IU_Conductor extends javax.swing.JFrame {
 
     private void Pagar_MultasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Pagar_MultasActionPerformed
         // TODO add your handling code here:
-        String m = matricula.getText();
-        String idT = id.getText();
+        String m = matricula.getText().trim();
+        String idT = id.getText().trim();
         if(m.isEmpty()){
             Ventana.setText("Introduza una matricula valida");
             return;
@@ -142,7 +143,13 @@ public class IU_Conductor extends javax.swing.JFrame {
 
         }
         
-        int i = Integer.parseInt(idT);
+        int i;
+        try{
+            i = Integer.parseInt(idT);
+        }catch(NumberFormatException e){
+            Ventana.setText("Introduza un identificador numerico valido");
+            return;
+        }
         boolean b = c.pagarMulta(m, i);
         
         if(b){
@@ -156,7 +163,7 @@ public class IU_Conductor extends javax.swing.JFrame {
     }//GEN-LAST:event_Pagar_MultasActionPerformed
 
     private void consular_multasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consular_multasActionPerformed
-        String m = matricula.getText();
+        String m = matricula.getText().trim();
         if(!m.isEmpty()){
             List<Multa> multas = c.verMultas(m);
             if(!multas.isEmpty()){
@@ -182,7 +189,7 @@ public class IU_Conductor extends javax.swing.JFrame {
     private void consultar_multas_pendientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consultar_multas_pendientesActionPerformed
 
         
-                String m = matricula.getText();
+                String m = matricula.getText().trim();
         if(!m.isEmpty()){
             List<Multa> multas = c.verMultasPendientes(m);
             if(!multas.isEmpty()){
@@ -239,7 +246,7 @@ public class IU_Conductor extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                SistemaPeaje sistemaPeaje = new SistemaPeaje();
+                SistemaPeaje sistemaPeaje = practicapeajes.Datos.Datos.cargarDatos();
                 Conductor c = new Conductor(sistemaPeaje);
                 new IU_Conductor(c).setVisible(true);
             }

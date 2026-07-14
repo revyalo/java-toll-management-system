@@ -21,6 +21,7 @@ La camara peaje debera registrar los datos del vehiculo
 y transmitirlo
 */
 public class CamaraPeaje extends Camara implements Serializable{
+    private static final long serialVersionUID = 1L;
     private int carril; //segun los carriles que haya en la autopista
     private Vehiculo vehiculoVisto; //el vehiculo que capturara
     

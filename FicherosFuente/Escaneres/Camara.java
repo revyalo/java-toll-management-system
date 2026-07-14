@@ -4,6 +4,8 @@
  */
 package practicapeajes.Escaneres;
 
+import java.io.Serializable;
+
 /**
  *
  * @author DavidArevaloRey
@@ -15,7 +17,8 @@ su constructor, sus variables y sus funciones.
 En conclusion servira como base
 
 */
-public abstract class Camara {
+public abstract class Camara implements Serializable {
+     private static final long serialVersionUID = 1L;
      private boolean enTransmision;
     public Camara() {
         this.enTransmision = false;
@@ -23,7 +26,7 @@ public abstract class Camara {
 
     public void activar(){
         this.enTransmision = false;
-    }// la activamos
+    }// la desactivamos
 
     public boolean isTipo() {
         return enTransmision;

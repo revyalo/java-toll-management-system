@@ -10,8 +10,7 @@ package practicapeajes.Objetos;
  */
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 import practicapeajes.Enumeraciones.TipoRadar;
 
 /*
@@ -23,6 +22,7 @@ Emplearemos comparable para ordenar la lista de multas
 */
 
 public class Multa implements Serializable, Comparable<Multa> {
+    private static final long serialVersionUID = 1L;
     private static int contadorIds = 0;
     private String matricula;
     private LocalDateTime fecha;
@@ -101,6 +101,11 @@ public class Multa implements Serializable, Comparable<Multa> {
     return this.identificador == m.identificador &&
             this.matricula.equalsIgnoreCase(m.matricula);
     
+    }
+
+    @Override
+    public int hashCode(){
+    return Objects.hash(matricula == null ? null : matricula.toUpperCase(), identificador);
     }
     
     public String toString(){

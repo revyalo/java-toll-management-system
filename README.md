@@ -70,6 +70,12 @@ java -cp build/classes practicapeajes.PracticaPeajes
 
 Tambien se puede abrir como proyecto Java en NetBeans y ejecutar la clase principal `practicapeajes.PracticaPeajes`.
 
+Ejecutar pruebas basicas de regresion:
+
+```bash
+java -cp build/classes practicapeajes.Pruebas.PruebasSistema
+```
+
 ## Documentacion y demo
 
 - [Guia de uso](docs/usage.md)

@@ -17,6 +17,7 @@ El objetivo de esta clase es implementar un vehiculo con sus cualidades como amt
 Se implementara la interfaz serializable para transmutarlo en un archivo binario en el futuro
 */
 public class Vehiculo implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String matricula;
     private double tamano;
     private LocalDateTime entrada;

@@ -18,6 +18,7 @@ Ticket que se transfomara posteriomente en un archivo binario,
 tendra las variables principales declardas y sobre todo la variable valor contenida
 */
 public class Ticket implements Serializable  {
+    private static final long serialVersionUID = 1L;
     private String matricula;
     private double tamano;
     private LocalDateTime fecha;

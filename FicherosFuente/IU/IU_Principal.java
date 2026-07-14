@@ -14,11 +14,12 @@ import practicapeajes.Usuarios.Operario;
  * @author DavidArevaloRey
  */
 public class IU_Principal extends javax.swing.JFrame {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates new form IU_Principal
      */
-    private practicapeajes.Sistema.SistemaPeaje sistemaPeajePrincipal;
+    private transient practicapeajes.Sistema.SistemaPeaje sistemaPeajePrincipal;
 
     public IU_Principal() {
         initComponents();

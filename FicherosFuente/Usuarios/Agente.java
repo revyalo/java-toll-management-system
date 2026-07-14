@@ -19,9 +19,10 @@ public class Agente {
     this.sistema = sistema;
     }
     
-    public void multarCoches(String matricula, double velocidad){
-        sistema.hacerMultaMovil(matricula, velocidad, LocalDateTime.now());
+    public boolean multarCoches(String matricula, double velocidad){
+        boolean registrada = sistema.hacerMultaMovil(matricula, velocidad, LocalDateTime.now());
         System.out.println("Agente: Solicita multas a " + matricula + "por la velocidad: " + velocidad + "km/hora");
+        return registrada;
 
     }
     

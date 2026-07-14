@@ -19,8 +19,9 @@ import practicapeajes.Usuarios.Operario;
  * @author DavidArevaloRey
  */
 public class IU_Operario extends javax.swing.JFrame {
-    private Operario operarioA;
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final long serialVersionUID = 1L;
+    private transient Operario operarioA;
+    private transient DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     /**
      * Creates new form IU_Operario
      */
@@ -69,7 +70,7 @@ public class IU_Operario extends javax.swing.JFrame {
             }
         });
 
-        matricula.setText("Introducir matricula");
+        matricula.setText("");
 
         Pantalla.setColumns(20);
         Pantalla.setFont(new java.awt.Font("Nirmala UI", 0, 24)); // NOI18N
@@ -77,7 +78,7 @@ public class IU_Operario extends javax.swing.JFrame {
         Pantalla.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         jScrollPane1.setViewportView(Pantalla);
 
-        Peso.setText("Introducir peso");
+        Peso.setText("");
         Peso.setToolTipText("");
 
         jLabel2.setText("Ingrese el peso cuando desee registrar la salida de un vehiculo junto a su matricula");
@@ -180,23 +181,27 @@ public class IU_Operario extends javax.swing.JFrame {
 
     private void Registrar_entradaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Registrar_entradaActionPerformed
         // TODO add your handling code here:
-        String matri = matricula.getText();
+        String matri = matricula.getText().trim();
         LocalDateTime fechaEntrada = LocalDateTime.now();
         if(matri.isEmpty()){
             Pantalla.setText("Introduza una matricula valida");
             return;
         }
 
-        operarioA.registrarEntrada(matri, fechaEntrada);
-        Pantalla.setText("Entrada registrada con exito del vehiculo con matricula " + matri );
+        boolean registrada = operarioA.registrarEntrada(matri, fechaEntrada);
+        if(registrada){
+            Pantalla.setText("Entrada registrada con exito del vehiculo con matricula " + matri );
+        }else{
+            Pantalla.setText("No se pudo registrar la entrada. Compruebe la matricula y que no exista una entrada pendiente.");
+        }
         
 
         
     }//GEN-LAST:event_Registrar_entradaActionPerformed
 
     private void Registrar_salidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Registrar_salidaActionPerformed
-        String matri = matricula.getText();
-        String tamano = Peso.getText();
+        String matri = matricula.getText().trim();
+        String tamano = Peso.getText().trim();
       
         
         if(matri.isEmpty()){
@@ -208,14 +213,25 @@ public class IU_Operario extends javax.swing.JFrame {
             Pantalla.setText("Introduza un tamanyo valido");
             return;
         }
-        operarioA.registrarSalida(matri, java.time.LocalDateTime.now(), Double.parseDouble(tamano));
-        Pantalla.setText("Salida registrada con exito del vehiculo con matricula " + matri + " cuyo tamanyo es: " + tamano + " m^(2)");
+        double tamanoNumerico;
+        try{
+            tamanoNumerico = Double.parseDouble(tamano);
+        }catch(NumberFormatException e){
+            Pantalla.setText("Introduza un tamanyo numerico valido. Use punto para los decimales.");
+            return;
+        }
+        boolean registrada = operarioA.registrarSalida(matri, java.time.LocalDateTime.now(), tamanoNumerico);
+        if(registrada){
+            Pantalla.setText("Salida registrada con exito del vehiculo con matricula " + matri + " cuyo tamanyo es: " + tamano + " m^(2)");
+        }else{
+            Pantalla.setText("No se pudo registrar la salida. Compruebe que exista una entrada previa y que el tamanyo sea positivo.");
+        }
         
     }//GEN-LAST:event_Registrar_salidaActionPerformed
 
     private void consultar_PeajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consultar_PeajeActionPerformed
         // TODO add your handling code here:
-         String matri = matricula.getText();
+         String matri = matricula.getText().trim();
                 
          if(matri.isEmpty()){
             Pantalla.setText("Introduza una matricula valida");
@@ -241,7 +257,7 @@ public class IU_Operario extends javax.swing.JFrame {
 
     private void consultar_pendientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consultar_pendientesActionPerformed
         // TODO add your handling code here:
-                String matri = matricula.getText();
+                String matri = matricula.getText().trim();
         if(matri.isEmpty()){
             Pantalla.setText("Introduza una matricula valida");
             return;
@@ -265,7 +281,7 @@ public class IU_Operario extends javax.swing.JFrame {
     }//GEN-LAST:event_consultar_pendientesActionPerformed
 
     private void Generar_ticketsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Generar_ticketsActionPerformed
-        String matri = matricula.getText();
+        String matri = matricula.getText().trim();
         if(matri.isEmpty()){
             Pantalla.setText("Introduza una matricula valida");
             return;
@@ -289,7 +305,7 @@ public class IU_Operario extends javax.swing.JFrame {
 
     private void Consultar_abonadasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Consultar_abonadasActionPerformed
         // TODO add your handling code here:
-        String matri = matricula.getText();
+        String matri = matricula.getText().trim();
         if(matri.isEmpty()){
             Pantalla.setText("Introduza una matricula valida");
             return;
@@ -342,7 +358,7 @@ public class IU_Operario extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                SistemaPeaje sistemaPeaje = new SistemaPeaje();
+                SistemaPeaje sistemaPeaje = practicapeajes.Datos.Datos.cargarDatos();
                practicapeajes.Usuarios.Operario operarioActual = new practicapeajes.Usuarios.Operario(sistemaPeaje);
                
                 new IU_Operario(operarioActual).setVisible(true);

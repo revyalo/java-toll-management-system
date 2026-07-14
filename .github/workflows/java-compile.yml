@@ -23,3 +23,6 @@ jobs:
         run: |
           mkdir -p build/classes
           find FicherosFuente -name "*.java" -print0 | xargs -0 javac -encoding UTF-8 -d build/classes
+
+      - name: Run regression tests
+        run: java -cp build/classes practicapeajes.Pruebas.PruebasSistema

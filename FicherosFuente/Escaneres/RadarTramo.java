@@ -8,7 +8,6 @@ package practicapeajes.Escaneres;
  *
  * @author DavidArevaloRey
  */
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import practicapeajes.Enumeraciones.TipoRadar;

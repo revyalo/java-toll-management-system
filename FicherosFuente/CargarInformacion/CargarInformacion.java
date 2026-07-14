@@ -79,18 +79,18 @@ public class CargarInformacion {
         sistema.hacerMultaMovil("1357STU", 130, LocalDateTime.of(2025, 5, 21, 12, 55));  
 
 
-        sistema.getMultas().add(
+        sistema.registrarMulta(
             new Multa("1234ABC", LocalDateTime.of(2025, 5, 20, 9, 0), 125.0, 300.0, TipoRadar.TRAMO));    
-        sistema.getMultas().add(
+        sistema.registrarMulta(
             new Multa("3456JKL", LocalDateTime.of(2025, 5, 21, 11, 45), 155.0, 1500.0, TipoRadar.TRAMO));  
 
         Multa multaPagada = new Multa("9999ZZZ", LocalDateTime.of(2025, 5, 21, 13, 0), 145.0, 200.0, TipoRadar.TRAMO);
         multaPagada.pagar(); 
-        sistema.getMultas().add(multaPagada);
+        sistema.registrarMulta(multaPagada);
 
         Multa multaPagada2 = new Multa("5678DEF", LocalDateTime.of(2025, 5, 21, 12, 0), 135.0, 300.0, TipoRadar.TRAMO);
         multaPagada2.pagar(); 
-        sistema.getMultas().add(multaPagada2);
+        sistema.registrarMulta(multaPagada2);
         
         
         
@@ -136,39 +136,39 @@ public class CargarInformacion {
         sistema.hacerMultaMovil("7788EEE", 150, LocalDateTime.of(2025, 5, 22, 15, 45));
         sistema.hacerMultaMovil("8642VWX", 125, LocalDateTime.of(2025, 5, 23, 9, 30));
 
-        sistema.getMultas().add(
+        sistema.registrarMulta(
             new Multa("9900FFF", LocalDateTime.of(2025, 5, 22, 15, 30), 135.0, 400.0, TipoRadar.TRAMO));
-        sistema.getMultas().add(
+        sistema.registrarMulta(
             new Multa("7890MNO", LocalDateTime.of(2025, 5, 22, 22, 0), 142.0, 550.0, TipoRadar.TRAMO));
-        sistema.getMultas().add(
+        sistema.registrarMulta(
             new Multa("1122BBB", LocalDateTime.of(2025, 5, 23, 9, 20), 158.0, 1600.0, TipoRadar.TRAMO));
 
         Multa multaPagada3 = new Multa("5566DDD", LocalDateTime.of(2025, 5, 22, 9, 45), 121.0, 100.0, TipoRadar.TRAMO);
         multaPagada3.pagar();
-        sistema.getMultas().add(multaPagada3);
+        sistema.registrarMulta(multaPagada3);
 
         Multa multaPagada4 = new Multa("9012GHI", LocalDateTime.of(2025, 5, 21, 12, 15), 140.0, 300.0, TipoRadar.TRAMO);
         multaPagada4.pagar();
-        sistema.getMultas().add(multaPagada4);
+        sistema.registrarMulta(multaPagada4);
 
         Multa multaExternaPagada = new Multa("0000XYZ", LocalDateTime.of(2025, 5, 23, 14, 0), 130.0, 150.0, TipoRadar.TRAMO);
         multaExternaPagada.pagar();
-        sistema.getMultas().add(multaExternaPagada);
+        sistema.registrarMulta(multaExternaPagada);
 
         Multa multaMovilPagada = new Multa("2468PQR", LocalDateTime.of(2025, 5, 21, 12, 50), 155.0, 450.0, TipoRadar.MOVIL);
         multaMovilPagada.pagar();
-        sistema.getMultas().add(multaMovilPagada);
+        sistema.registrarMulta(multaMovilPagada);
 
         Vehiculo v14 = new Vehiculo("2233GGG", 19.1);
         sistema.registrarEntrada(v14, LocalDateTime.of(2025, 5, 24, 10, 0));
         sistema.registrarSalida("2233GGG", LocalDateTime.of(2025, 5, 24, 11, 15), 19.1);
         sistema.hacerMultaMovil("2233GGG", 180, LocalDateTime.of(2025, 5, 24, 10, 50));
-        sistema.getMultas().add(
+        sistema.registrarMulta(
             new Multa("3456JKL", LocalDateTime.of(2025, 5, 22, 9, 15), 148.0, 700.0, TipoRadar.TRAMO));
         sistema.registrarEntrada(v7, LocalDateTime.of(2025, 5, 24, 12, 00));
         Multa multaPagada5 = new Multa("1357STU", LocalDateTime.of(2025, 5, 24, 12, 00), 128.0, 100.0, TipoRadar.MOVIL);
         multaPagada5.pagar();
-        sistema.getMultas().add(multaPagada5);
+        sistema.registrarMulta(multaPagada5);
 
 
 

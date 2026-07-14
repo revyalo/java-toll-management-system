@@ -47,6 +47,14 @@ public class Datos {
     */
 
     public static SistemaPeaje cargarDatos() { // se busca leer un archivo desde un archivo serializado
+        File archivo = new File(RUTA);
+        if(!archivo.exists()){
+            File carpeta = archivo.getParentFile();
+            if(carpeta != null && !carpeta.exists()) {
+                carpeta.mkdirs();
+            }
+            return new SistemaPeaje();
+        }
         try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(RUTA))) {
             return (SistemaPeaje) ois.readObject(); //los objetos guardados los vuelve en el formato deseado y los pasa a nuestro sistema
         }catch (IOException | ClassNotFoundException e){ //error de excepcion
