@@ -1,50 +1,45 @@
-# Guia de uso
+# Guía de uso
 
-## Arranque
-
-Compila y ejecuta desde la raiz del repositorio:
+## Inicio
 
 ```bash
-mkdir -p build/classes
-find FicherosFuente -name "*.java" -print0 | xargs -0 javac -encoding UTF-8 -d build/classes
-java -cp build/classes practicapeajes.PracticaPeajes
+mvn clean verify
+mvn exec:java -Dexec.mainClass=com.revyalo.toll.TollApplication
 ```
 
-La aplicacion abre una interfaz Swing desde la que se accede a los perfiles disponibles.
+El primer arranque crea la base SQLite y los usuarios de demostración documentados en el README.
 
-## Roles
+## Flujo de operario
 
-### Operario
+1. Inicia sesión como `operator`.
+2. Registra una entrada indicando matrícula.
+3. Registra la salida posterior indicando matrícula y tamaño.
+4. El servicio genera el ticket y, si el trayecto de 100 km implica más de 120 km/h, una multa de tramo.
+5. Consulta los registros o exporta el historial CSV.
 
-Permite registrar entradas y salidas de vehiculos, generar tickets, consultar multas y exportar historiales de peaje asociados a una matricula.
+## Flujo de agente
 
-Flujo recomendado:
+1. Inicia sesión como `agent`.
+2. Introduce matrícula y velocidad detectada.
+3. Si la velocidad supera 120 km/h se crea una multa móvil; en caso contrario no se altera la base de datos.
 
-1. Registrar la entrada del vehiculo con su matricula.
-2. Registrar la salida con la misma matricula y el tamano del vehiculo.
-3. Generar o consultar el ticket correspondiente.
+## Flujo de conductor
 
-### Agente
+1. Inicia sesión como `driver`.
+2. Consulta tickets o multas de la matrícula asociada.
+3. Introduce el ID de una multa pendiente para abonarla.
 
-Permite generar multas asociadas a una matricula cuando se detecta un exceso de velocidad.
+El conductor no puede consultar matrículas distintas aunque se invoque el servicio fuera de Swing.
 
-### Conductor
+## Archivos runtime
 
-Permite consultar multas asociadas a una matricula y pagar multas pendientes mediante su identificador.
-
-## Formato de datos
-
-- En campos numericos con decimales se debe usar punto (`.`), no coma.
-- Las matriculas usadas en los datos de prueba son ficticias.
-- Los historiales exportados se guardan en `FicherosDatos/`.
-- El estado persistente se guarda en `FicherosDatos/peajes.dat`.
-
-## Datos de prueba
-
-La clase `practicapeajes.Ficheros.CargarInformacion` genera datos sinteticos para probar tickets, multas pagadas, multas pendientes y consultas por matricula.
-
-Para ejecutarla despues de compilar:
-
-```bash
-java -cp build/classes practicapeajes.Ficheros.CargarInformacion
+```text
+data/
+├── tolls.db
+├── exports/
+│   └── 1234ABC-YYYYMMDD-HHMMSS.csv
+└── logs/
+    └── toll-system.log
 ```
+
+Todo el directorio se ignora en Git.

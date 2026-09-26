@@ -1,97 +1,159 @@
-# Sistema de Gestión de Peajes en Java
+# Java Toll Management System
 
-Aplicación de escritorio desarrollada como práctica académica de Programación Orientada a Objetos. Simula un sistema de peajes con registro de vehículos, generación de tickets, gestión de multas, radares de tramo/móviles, perfiles de usuario y persistencia local de datos.
+Aplicación de escritorio para gestionar entradas y salidas de peaje, tickets y multas. Está construida con **Java 17, Swing, SQLite/JDBC, Maven y JUnit 5** siguiendo una arquitectura por capas.
 
-El objetivo del repositorio es presentar la práctica como un proyecto de Java orientado a objetos, con interfaz gráfica Swing, modelado de entidades y organización del código por responsabilidades.
+Este repositorio nació como una práctica académica de POO. La versión 2 conserva sus reglas de tarifas, radares y roles, pero sustituye la serialización binaria y el acoplamiento entre formularios y datos por servicios comprobables y persistencia SQL transaccional.
+
+![Pantalla de acceso Swing](docs/screenshots/login.png)
+
+![Panel de operario](docs/screenshots/operator-dashboard.png)
+
+## Qué demuestra
+
+- Java moderno con modelo de dominio inmutable.
+- Interfaz desktop Swing sin lógica de negocio embebida.
+- Arquitectura `UI → Services → Domain → Repositories → SQLite`.
+- JDBC con consultas preparadas y transacciones.
+- Autenticación con PBKDF2 y autorización explícita por rol.
+- Registro de auditoría para operaciones que modifican estado.
+- Validaciones y excepciones centralizadas.
+- Logging estructurado con SLF4J y Logback.
+- Tests unitarios, de integración SQLite y de autorización con JUnit 5.
+- Build reproducible con Maven y CI en Java 17/21.
+
+## Arquitectura
+
+```mermaid
+flowchart LR
+    UI["Swing UI"] --> AUTH["AuthenticationService"]
+    UI --> SERVICE["TollService"]
+    AUTH --> SECURITY["PBKDF2 + roles"]
+    SERVICE --> DOMAIN["Domain policies"]
+    SERVICE --> REPO["TollRepository"]
+    AUTH --> REPO
+    REPO --> JDBC["SQLite / JDBC"]
+    SERVICE --> EXPORT["CSV history exporter"]
+    REPO --> AUDIT["Audit events"]
+```
+
+| Capa | Responsabilidad |
+| --- | --- |
+| `ui` | Presentar formularios, recoger acciones y mostrar resultados/errores. |
+| `service` | Casos de uso, límites de autorización, exportación y coordinación transaccional. |
+| `domain` | Entidades, tarifas y políticas de radares independientes de Swing/SQL. |
+| `validation` | Normalización de matrículas y reglas de entrada centralizadas. |
+| `security` | PBKDF2, principal autenticado y autorización por rol. |
+| `repository` | Contrato de persistencia e implementación SQLite/JDBC. |
+| `bootstrap` | Configuración, migración inicial, composición de dependencias y demo segura. |
+
+El [documento de arquitectura](docs/architecture.md) contiene el UML, el modelo relacional y las decisiones principales.
 
 ## Funcionalidades
 
-- Interfaz gráfica en Java Swing para operar el sistema.
-- Flujo separado para conductor, agente y operario.
-- Registro de entrada y salida de vehículos.
-- Generación de tickets de peaje según tamaño del vehículo y franja horaria.
-- Cálculo de multas por radar móvil y radar de tramo.
-- Consulta y pago de multas.
-- Exportación de historiales por matrícula.
-- Persistencia local mediante serialización de objetos.
-- Datos de prueba sintéticos para validar la aplicación.
+### Operario
 
-## Conceptos trabajados
+- Registrar entradas y salidas.
+- Generar el ticket en la misma transacción que cierra el paso activo.
+- Generar automáticamente una multa de tramo cuando corresponda.
+- Consultar tickets y multas por matrícula.
+- Exportar el historial en CSV.
+- Consultar los últimos eventos de auditoría.
 
-- Programación Orientada a Objetos en Java.
-- Modelado de entidades y relaciones del dominio.
-- Herencia, composición y encapsulación.
-- Separación de responsabilidades mediante paquetes.
-- Diseño de interfaces gráficas con Swing.
-- Gestión de distintos tipos de usuario y flujos de operación.
-- Persistencia y recuperación de estado.
-- Validación funcional de datos introducidos por la interfaz.
-- Generación y consulta de historiales.
-- Pruebas básicas de regresión.
+### Agente
 
-## Estructura
+- Evaluar detecciones de radar móvil.
+- Registrar multas solo cuando se supera el límite.
+- Consultar multas por matrícula.
 
-```text
-FicherosFuente/
-  CargarInformacion/   Datos de prueba sintéticos
-  Datos/               Persistencia del sistema
-  Enumeraciones/       Tipos auxiliares
-  Escaneres/           Cámaras y radares
-  IU/                  Interfaz gráfica Swing
-  Objetos/             Entidades principales
-  Sistema/             Núcleo de negocio
-  Usuarios/            Tipos de usuario
-docs/
-  security-notes.md    Notas adicionales sobre seguridad y trazabilidad
-  usage.md             Guía rápida de ejecución y uso
-  uml.pdf              Diagrama UML original
-media/
-  demo-pruebas.mp4     Vídeo de pruebas de la práctica
-```
+### Conductor
 
-## Ejecución
+- Consultar únicamente los tickets y multas de su matrícula asociada.
+- Pagar multas pendientes una sola vez.
 
-Requisitos:
+Las autorizaciones se aplican en `TollService`, no solo ocultando botones. Una llamada directa desde otra interfaz recibe igualmente `UnauthorizedOperationException`.
 
-- Java JDK 17 o superior.
-- Terminal compatible con `find` y `xargs`, o un IDE Java como NetBeans.
+## Ejecutar
 
-Compilar desde la raíz del repositorio:
+Requisitos: JDK 17+ y Maven 3.9+.
 
 ```bash
-mkdir -p build/classes
-find FicherosFuente -name "*.java" -print0 | xargs -0 javac -encoding UTF-8 -d build/classes
+mvn clean verify
+mvn exec:java -Dexec.mainClass=com.revyalo.toll.TollApplication
 ```
 
-Ejecutar la aplicación:
+También se genera un JAR con todas las dependencias:
 
 ```bash
-java -cp build/classes practicapeajes.PracticaPeajes
+mvn package
+java -jar target/java-toll-management-system-2.0.0-SNAPSHOT-all.jar
 ```
 
-También se puede abrir como proyecto Java en NetBeans y ejecutar la clase principal `practicapeajes.PracticaPeajes`.
-
-Ejecutar pruebas básicas de regresión:
+Comprobación no gráfica útil para despliegues y CI:
 
 ```bash
-java -cp build/classes practicapeajes.Pruebas.PruebasSistema
+TOLL_DB_PATH=/tmp/tolls-check.db \
+  java -jar target/java-toll-management-system-2.0.0-SNAPSHOT-all.jar --health-check
 ```
 
-## Documentación y demo
+En el primer arranque se crea `data/tolls.db`, se ejecuta el esquema y se añaden cuentas puramente demostrativas:
 
-- [Guía de uso](docs/usage.md)
-- [Diagrama UML](docs/uml.pdf)
-- [Vídeo de pruebas](media/demo-pruebas.mp4)
-- [Notas adicionales de seguridad](docs/security-notes.md)
+| Usuario | Contraseña | Rol | Matrícula |
+| --- | --- | --- | --- |
+| `operator` | `demo1234` | Operario | — |
+| `agent` | `demo1234` | Agente | — |
+| `driver` | `demo1234` | Conductor | `1234ABC` |
 
-## Datos
+Estas credenciales están pensadas exclusivamente para una demo local. Las contraseñas se almacenan con PBKDF2-HMAC-SHA256, sal aleatoria y 120.000 iteraciones, nunca en texto plano.
 
-Los datos de prueba incluidos en el código son sintéticos y no corresponden a vehículos reales. Los archivos generados en ejecución, como `peajes.dat` o historiales exportados, se excluyen del control de versiones para evitar subir estado local al repositorio.
+Para elegir otra base de datos:
 
-## Mejoras futuras
+```bash
+TOLL_DB_PATH=/ruta/privada/peajes.db \
+  mvn exec:java -Dexec.mainClass=com.revyalo.toll.TollApplication
+```
 
-- Sustituir la serialización binaria por JSON, SQLite o una base de datos embebida.
-- Añadir tests unitarios para tarifas, multas y búsquedas.
-- Centralizar validaciones de entrada.
-- Separar mejor la lógica de negocio de la interfaz Swing.
-- Mejorar la persistencia y la gestión de configuración.
+También puede usarse `-Dtoll.db.path=/ruta/peajes.db`.
+
+## Persistencia
+
+SQLite mantiene tablas separadas para:
+
+- usuarios y roles;
+- pasos actualmente abiertos;
+- tickets finalizados;
+- multas y estado de pago;
+- eventos de auditoría.
+
+Las salidas eliminan el paso activo y crean ticket/multa dentro de una única transacción. Las matrículas nunca se concatenan en SQL: todos los valores entran mediante `PreparedStatement`.
+
+La versión 2 no deserializa `peajes.dat`. La deserialización Java de objetos no confiables introduce riesgos y acopla el formato a las clases; SQLite ofrece un esquema inspeccionable, migrable y consultable.
+
+## Tests
+
+```bash
+mvn test
+```
+
+La suite cubre:
+
+- todas las franjas de tarifa y límites de tamaño;
+- radar móvil, radar de tramo y velocidad límite;
+- matrículas, tamaños, fechas y entradas maliciosas;
+- persistencia tras reabrir SQLite;
+- atomicidad de entrada/salida/ticket/multa;
+- pagos únicos y auditoría;
+- autenticación correcta/incorrecta;
+- permisos de operario, agente y conductor;
+- consultas restringidas por matrícula;
+- exportación CSV;
+- inicialización completa del contexto de aplicación.
+
+GitHub Actions ejecuta `mvn verify` con Temurin 17 y 21.
+
+## Logging y datos runtime
+
+Los logs rotan en `data/logs/` mediante Logback. La base SQLite, logs y exportaciones se excluyen de Git. Los datos incluidos por el inicializador son ficticios.
+
+## Evolución del proyecto
+
+El UML, las notas y el vídeo de la primera versión se conservan como material histórico en `docs/legacy-uml.pdf`, `docs/legacy-notes.txt` y `media/legacy-demo-pruebas.mp4`. El historial Git permite comparar directamente la práctica original con la versión por capas.

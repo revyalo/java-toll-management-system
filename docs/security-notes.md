@@ -1,39 +1,40 @@
-# Notas de seguridad y portfolio
+# Seguridad y límites
 
-Este repositorio esta pensado como practica academica de Java/POO. Para presentarlo dentro de un portfolio orientado a ciberseguridad conviene explicarlo desde la perspectiva de diseno de sistemas, trazabilidad y gestion de roles.
+## Controles implementados
 
-## Que demuestra
+- PBKDF2-HMAC-SHA256 con sal aleatoria por usuario y 120.000 iteraciones.
+- Mensaje de autenticación uniforme para usuario inexistente y contraseña incorrecta.
+- Derivación ficticia cuando el usuario no existe para reducir diferencias temporales triviales.
+- Borrado de arrays de contraseña después de usarlos.
+- Autorización en la capa de servicio mediante `UserPrincipal` y `UserRole`.
+- Restricción de conductores a su matrícula vinculada.
+- Consultas SQL preparadas en todas las operaciones.
+- Transacciones para pasos, tickets, multas y eventos de auditoría relacionados.
+- Lista blanca y normalización de matrículas antes de usarlas en búsquedas o nombres de exportación.
+- Logs sin contraseñas ni hashes.
+- Exclusión de base de datos, logs y exportaciones del control de versiones.
+- Eliminación de la deserialización binaria Java.
 
-- Modelado de usuarios con responsabilidades distintas: conductor, agente y operario.
-- Registro de eventos relevantes: entradas, salidas, tickets, multas y pagos.
-- Generacion de historiales consultables por matricula.
-- Persistencia local del estado de la aplicacion.
-- Separacion entre entidades, logica de negocio, interfaz y carga de datos.
+## Modelo de permisos
 
-## Relacion con ciberseguridad
+| Operación | Operario | Agente | Conductor |
+| --- | :---: | :---: | :---: |
+| Registrar entrada/salida | Sí | No | No |
+| Emitir multa móvil | No | Sí | No |
+| Consultar tickets | Cualquier matrícula | No | Solo propia |
+| Consultar multas | Cualquier matrícula | Cualquier matrícula | Solo propia |
+| Pagar multa | No | No | Solo propia |
+| Exportar historial/auditoría | Sí | No | No |
 
-El proyecto no implementa hacking, pentesting ni defensa de red. Su relacion con ciberseguridad esta en conceptos base que aparecen en aplicaciones reales:
+## Alcance
 
-- Control funcional por rol.
-- Auditabilidad de acciones.
-- Conservacion de evidencias operativas.
-- Validacion de entradas de usuario.
-- Proteccion frente a subida accidental de datos runtime mediante `.gitignore`.
+Es una aplicación local de portfolio, no un sistema de cobro real. No implementa:
 
-## Riesgos conocidos
+- integración con un proveedor de identidad;
+- MFA, recuperación de cuenta o rotación de credenciales;
+- cifrado de SQLite en reposo;
+- firma de eventos de auditoría;
+- autorización multi-tenant;
+- procesamiento de tarjetas o datos bancarios.
 
-- La persistencia usa serializacion binaria de Java, valida para una practica academica pero no recomendable como formato principal en sistemas reales.
-- No existe autenticacion real de usuarios.
-- No hay cifrado ni firma de los datos persistidos.
-- La interfaz y la logica de negocio todavia estan bastante acopladas.
-- Las validaciones dependen en parte de los formularios Swing.
-
-## Como contarlo en GitHub o CV
-
-Texto corto recomendado:
-
-> Aplicacion Java Swing desarrollada como practica de POO para simular un sistema de peajes con roles, tickets, multas, radares y persistencia local. El proyecto enfatiza separacion de responsabilidades, trazabilidad de eventos y gestion basica de datos.
-
-Texto mas orientado a ciberseguridad:
-
-> Proyecto academico en Java centrado en modelado de roles, trazabilidad operativa y persistencia de eventos dentro de un sistema simulado de peajes. Incluye flujos diferenciados para operario, agente y conductor, generacion de historiales y control de datos generados en ejecucion.
+Las credenciales demo deben reemplazarse antes de cualquier despliegue distinto de una demostración local.
