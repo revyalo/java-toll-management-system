@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Java ${{ matrix.java }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [17, 21]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: maven
+      - name: Compile, test and package
+        run: mvn --batch-mode --no-transfer-progress verify
+      - name: Verify executable JAR and SQLite bootstrap
+        env:
+          TOLL_DB_PATH: ${{ runner.temp }}/tolls-${{ matrix.java }}.db
+        run: java -jar target/java-toll-management-system-2.0.0-SNAPSHOT-all.jar --health-check
+      - name: Upload test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-java-${{ matrix.java }}
+          path: target/surefire-reports/

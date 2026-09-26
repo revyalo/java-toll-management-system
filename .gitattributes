@@ -3,7 +3,10 @@
 *.md text eol=lf
 *.yml text eol=lf
 *.txt text eol=lf
+*.xml text eol=lf
 *.pdf binary
 *.mp4 binary
+*.png binary
 *.dat binary
+*.db binary
 *.jar binary
